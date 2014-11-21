@@ -35,6 +35,7 @@ namespace Remotion.Linq.SqlBackend.MappingResolution
       ISqlSubStatementVisitor,
       IJoinConditionExpressionVisitor,
       IUnresolvedJoinConditionExpressionVisitor, 
+      IUnresolvedCollectionJoinConditionExpressionVisitor,
       INamedExpressionVisitor,
       ISqlNullCheckExpressionVisitor,
       ISqlInExpressionVisitor,
@@ -240,6 +241,18 @@ namespace Remotion.Linq.SqlBackend.MappingResolution
       var joinedTableInfo = expression.JoinedTable.GetResolvedTableInfo();
       var resolvedJoinCondition = _resolver.ResolveJoinCondition (expression.OriginatingEntity, expression.MemberInfo, joinedTableInfo);
       return VisitExpression (resolvedJoinCondition);
+    }
+
+    public Expression VisitUnresolvedCollectionJoinConditionExpression (UnresolvedCollectionJoinConditionExpression expression)
+    {
+      ArgumentUtility.CheckNotNull ("expression", expression);
+
+      var originatingEntity = _context.GetOriginatingEntityForUnresolvedCollectionJoinTableInfo (expression.UnresolvedCollectionJoinTableInfo);
+      var actualJoinConditionExpression = new UnresolvedJoinConditionExpression (
+          originatingEntity,
+          expression.UnresolvedCollectionJoinTableInfo.MemberInfo,
+          expression.JoinedTable);
+      return VisitExpression (actualJoinConditionExpression);
     }
 
     public Expression VisitNamedExpression (NamedExpression expression)
