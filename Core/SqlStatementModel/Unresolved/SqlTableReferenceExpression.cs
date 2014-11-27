@@ -29,19 +29,19 @@ namespace Remotion.Linq.SqlBackend.SqlStatementModel.Unresolved
   /// </summary>
   public class SqlTableReferenceExpression : ExtensionExpression
   {
-    private readonly SqlTableBase _sqlTableBase;
+    private readonly SqlTable _sqlTable;
 
-    public SqlTableReferenceExpression (SqlTableBase sqlTable)
+    public SqlTableReferenceExpression (SqlTable sqlTable)
         : base(sqlTable.ItemType)
     {
       ArgumentUtility.CheckNotNull ("sqlTable", sqlTable);
 
-      _sqlTableBase = sqlTable;
+      _sqlTable = sqlTable;
     }
 
-    public SqlTableBase SqlTable
+    public SqlTable SqlTable
     {
-      get { return _sqlTableBase; }
+      get { return _sqlTable; }
     }
 
     protected override Expression VisitChildren (ExpressionTreeVisitor visitor)
@@ -63,18 +63,11 @@ namespace Remotion.Linq.SqlBackend.SqlStatementModel.Unresolved
 
     public override string ToString ()
     {
-      // TODO RMLNQSQL-64: Always SqlTable.
-      var sqlTableBaseAsSqlTable = _sqlTableBase as SqlTable;
-      if (sqlTableBaseAsSqlTable!=null)
-      {
-        var resolvedTableInfo = sqlTableBaseAsSqlTable.TableInfo as IResolvedTableInfo;
-        if (resolvedTableInfo != null)
-          return "TABLE-REF(" + resolvedTableInfo.TableAlias + ")";
-        else
-          return "TABLE-REF(" + sqlTableBaseAsSqlTable.TableInfo.GetType ().Name + "(" + sqlTableBaseAsSqlTable.TableInfo.ItemType.Name + "))";
-      }
-
-      return "TABLE-REF (" + _sqlTableBase.GetType().Name + " (" + _sqlTableBase.ItemType.Name + "))";
+      var resolvedTableInfo = _sqlTable.TableInfo as IResolvedTableInfo;
+      if (resolvedTableInfo != null)
+        return "TABLE-REF(" + resolvedTableInfo.TableAlias + ")";
+      else
+        return "TABLE-REF(" + _sqlTable.TableInfo.GetType ().Name + "(" + _sqlTable.TableInfo.ItemType.Name + "))";
     }
   }
 }
