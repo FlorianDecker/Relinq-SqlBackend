@@ -23,8 +23,21 @@ using Remotion.Utilities;
 
 namespace Remotion.Linq.SqlBackend.SqlStatementModel.SqlSpecificExpressions
 {
+  /// <summary>
+  /// Represents a literal SQL constant value. This is similar to a <see cref="ConstantExpression"/>, but it isn't encapsulated as a SQL parameter,
+  /// but rendered inline.
+  /// </summary>
   public class SqlLiteralExpression : ExtensionExpression
   {
+    public static SqlLiteralExpression Null (Type type)
+    {
+      ArgumentUtility.CheckNotNull ("type", type);
+      if (!NullableTypeUtility.IsNullableType (type))
+        throw new ArgumentException ("Type must be nullable.", "type");
+
+      return new SqlLiteralExpression (null, type);
+    }
+
     private readonly object _value;
 
     public SqlLiteralExpression (int value, bool nullable = false)
@@ -76,7 +89,9 @@ namespace Remotion.Linq.SqlBackend.SqlStatementModel.SqlSpecificExpressions
 
     public override string ToString ()
     {
-      if (Value is string)
+      if (Value == null)
+        return "NULL";
+      else if (Value is string)
         return "\"" + Value + "\"";
       else
         return Value.ToString();
