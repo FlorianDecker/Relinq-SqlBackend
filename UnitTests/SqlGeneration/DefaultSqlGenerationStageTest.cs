@@ -17,11 +17,10 @@
 
 using System;
 using System.Linq.Expressions;
-using System.Reflection;
+using JetBrains.Annotations;
 using NUnit.Framework;
 using Remotion.Development.UnitTesting;
 using Remotion.Linq.Clauses;
-using Remotion.Linq.Development.UnitTesting;
 using Remotion.Linq.Development.UnitTesting.Clauses.StreamedData;
 using Remotion.Linq.SqlBackend.SqlGeneration;
 using Remotion.Linq.SqlBackend.SqlStatementModel;
@@ -42,7 +41,9 @@ namespace Remotion.Linq.SqlBackend.UnitTests.SqlGeneration
     [SetUp]
     public void SetUp ()
     {
-      var sqlTable = SqlStatementModelObjectMother.CreateSqlTable_WithResolvedTableInfo();
+      var sqlTable = SqlStatementModelObjectMother.CreateSqlAppendedTable (
+          SqlStatementModelObjectMother.CreateSqlTable_WithResolvedTableInfo(),
+          JoinSemantics.Inner);
       _entityExpression = new SqlEntityDefinitionExpression (
           typeof (string),
           "t",
@@ -111,7 +112,7 @@ namespace Remotion.Linq.SqlBackend.UnitTests.SqlGeneration
           Throws.Nothing);
     }
 
-    private static string SomeMethod (string s)
+    private static string SomeMethod ([UsedImplicitly] string s)
     {
       throw new NotImplementedException();
     }
