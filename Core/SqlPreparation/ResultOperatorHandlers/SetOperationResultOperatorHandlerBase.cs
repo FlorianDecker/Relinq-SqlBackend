@@ -87,7 +87,6 @@ namespace Remotion.Linq.SqlBackend.SqlPreparation.ResultOperatorHandlers
         MoveCurrentStatementToSqlTable (
             sqlStatementBuilder,
             context,
-            ti => new SqlTable (ti),
             stage,
             OrderingExtractionPolicy.DoNotExtractOrderings);
       }
